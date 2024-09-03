@@ -1,0 +1,63 @@
+---
+version: '1.3'
+options:
+    annihilate_electrostatics: true
+    annihilate_sterics: false
+    checkpoint_interval: 1
+    default_nsteps_per_iteration: 500
+    default_number_of_iterations: 2000
+    default_timestep: 2 * femtosecond
+    minimize: false
+    number_of_equilibration_iterations: 1
+    output_dir: ..
+    platform: CUDA
+    pressure: 101.325 * kilopascal
+    start_from_trailblaze_samples: false
+    temperature: 298.15 * kelvin
+    verbose: false
+systems:
+    solvation-system:
+        phase1_path: [solvent_1.xml, solvent_1.pdb]
+        phase2_path: [solvent_2.xml, solvent_2.pdb]
+        solvent_1.pdb: ../solvent_1.pdb
+        solvent_1.xml: ../solvent_1.xml
+        solvent_2.pdb: ../solvent_2.pdb
+        solvent_2.xml: ../solvent_2.xml
+        solvent_dsl: resname HOH
+protocols:
+    solvation-protocol: !Ordered
+        solvent1:
+            alchemical_path:
+                lambda_electrostatics: [1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+                    0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+                    0.0, 0.0, 0.0]
+                lambda_sterics: [1.0, 0.9925546062063592, 0.9246293041729547, 0.863170411779581,
+                    0.8088586580539789, 0.7573981634108418, 0.7061958757359972, 0.660340007010126,
+                    0.6152618978405202, 0.5698089626386863, 0.5264737822510273, 0.4860809917736246,
+                    0.449695762499911, 0.41609218161739553, 0.38301497300049314, 0.3512943565726655,
+                    0.3225323338876827, 0.29748878661860173, 0.2740121805079102, 0.25141888598226136,
+                    0.22551121243419076, 0.1931177523474782, 0.15001507734525307,
+                    0.09001293310823395, 0.0]
+            trailblazer_options:
+                bidirectional_redistribution: true
+                constrain_receptor: false
+                distance_tolerance: 0.05
+                n_equilibration_iterations: 1000
+                n_samples_per_state: 100
+                reversed_direction: true
+                thermodynamic_distance: 0.5
+        solvent2:
+            alchemical_path:
+                lambda_electrostatics: [1.0, 0.0]
+                lambda_sterics: [1.0, 1.0]
+            trailblazer_options:
+                bidirectional_redistribution: true
+                constrain_receptor: false
+                distance_tolerance: 0.05
+                n_equilibration_iterations: 1000
+                n_samples_per_state: 100
+                reversed_direction: true
+                thermodynamic_distance: 0.5
+experiments:
+    protocol: solvation-protocol
+    system: solvation-system

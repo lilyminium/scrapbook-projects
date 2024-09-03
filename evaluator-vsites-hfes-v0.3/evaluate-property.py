@@ -82,7 +82,13 @@ def main(
         options = RequestOptions.from_json(options_path)
     else:
         options = RequestOptions()
-        options.calculation_layers = ["SimulationLayer"] # only use direct simulation to run
+        options.calculation_layers = ["SimulationLayer"]
+        options.add_schema(
+            "SimulationLayer",
+            "SolvationFreeEnergy",
+            SolvationFreeEnergy.default_simulation_schema(),
+        )
+        
 
     request, exception = evaluator_client.request_estimate(
         property_set=dataset,

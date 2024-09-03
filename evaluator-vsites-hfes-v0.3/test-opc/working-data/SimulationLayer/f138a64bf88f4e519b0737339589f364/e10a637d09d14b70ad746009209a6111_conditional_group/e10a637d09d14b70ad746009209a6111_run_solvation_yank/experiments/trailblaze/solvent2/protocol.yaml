@@ -1,0 +1,6 @@
+lambda_electrostatics:
+- 0.0
+- 1.0
+lambda_sterics:
+- 1.0
+- 1.0

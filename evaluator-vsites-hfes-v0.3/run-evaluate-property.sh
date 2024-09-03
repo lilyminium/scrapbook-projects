@@ -12,7 +12,7 @@
 
 . ~/.bashrc
 
-conda activate evaluator-vsites-hfes-v0.3
+conda activate evaluator-vsites-hfes-0.3
 
 DATASET_FILE="../filtered_dataset_sfe_np1.json"
 FORCEFIELD_FILE="force-field.json"
@@ -22,8 +22,8 @@ SUBDIRECTORY="test-opc3"
 
 cd $SUBDIRECTORY
 
-python $SCRIPT                                          \
+python ../evaluate-property.py                          \
     --input         ../filtered_dataset_sfe_np1.json    \
     --output        results.json                        \
     --forcefield    force-field.json                    \
-    --port          9012
+    --port          9013
