@@ -1,0 +1,58 @@
+name: absolv-dev
+
+channels:
+  - conda-forge
+
+dependencies:
+
+  - python
+  - pydantic            >=2
+  - tqdm
+
+  - openff-toolkit      >=0.13.0
+  - openff-utilities
+
+  - openmm              >=8.0
+  - mdtraj
+  - femto
+
+  - pymbar              >=4.0
+
+  # Optional packages
+
+  ### Parameterization
+  - rdkit
+  - ambertools
+
+  ### Custom functional forms
+  - smirnoff-plugins
+
+  # Dev / Testing
+  - versioneer
+
+  - pre-commit
+  - ruff
+
+  - pytest
+  - pytest-mock
+  - pytest-cov
+  - codecov
+
+  ### Regression Testing
+  - openmmforcefields
+  - seaborn
+  - pandas
+
+  # Docs
+  - mkdocs
+  - mkdocs-material
+  - mkdocs-gen-files
+  - mkdocs-literate-nav
+  - mkdocs-jupyter
+  - mkdocstrings
+  - mkdocstrings-python
+  - black
+  - mike
+
+  - pip:
+      - mkdocs-bibtex
