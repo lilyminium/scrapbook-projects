@@ -15,11 +15,11 @@
 conda activate absolv-dev
 
 
-WATER="opc"
-# WATER="opc3"
 
 
-mkdir $WATER
-cd $WATER
 
-python ../test-system.py --forcefield "openff-2.2.0.offxml" --forcefield "${WATER}.offxml"
+
+mkdir vsite-solute
+cd vsite-solute
+
+python ../test-system.py --forcefield "../forcefields/vsite-test.offxml"
