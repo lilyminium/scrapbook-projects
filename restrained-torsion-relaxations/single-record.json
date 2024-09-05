@@ -1,0 +1,14 @@
+{
+  "entries": {
+    "https://api.qcarchive.molssi.org:443/": [
+      {
+        "type": "torsion",
+        "record_id": 119466831,
+        "cmiles": "[H:1]/[C:2](=[C:3]1/[S:4]/[C:5](=[C:6](/[H:7])[C:8]2=[N+:9]([C:10]([H:11])([H:12])[C:13]([H:14])([H:15])[H:16])[c:17]3[c:18]([H:19])[c:20]([H:21])[c:22]([H:23])[c:24]([H:25])[c:26]3[S:27]2)[S:28][C:29]1=[O:30])[C:31]([H:32])([H:33])[H:34]",
+        "inchi_key": "LQIKFSJJYIGWNC-BIXRWQCYNA-N"
+      }
+    ]
+  },
+  "provenance": {},
+  "type": "TorsionDriveResultCollection"
+}
