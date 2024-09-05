@@ -1,5 +1,5 @@
 import click
-
+import pathlib
 import pickle
 
 import absolv.config
@@ -53,7 +53,7 @@ def main(
     prepared_system_a, prepared_system_b = absolv.runner.setup(system, config, force_field)
 
     result = absolv.runner.run_eq(
-        config, prepared_system_a, prepared_system_b, "CUDA", output_dir="."
+        config, prepared_system_a, prepared_system_b, "CUDA", output_dir=pathlib.Path(".")
     )
 
     with open("result.pkl", "wb") as file:

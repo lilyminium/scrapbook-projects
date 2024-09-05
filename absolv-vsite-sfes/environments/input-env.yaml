@@ -57,3 +57,4 @@ dependencies:
 
   - pip:
       - mkdocs-bibtex
+      - git+https://github.com/lilyminium/absolv.git@add-vsite-support

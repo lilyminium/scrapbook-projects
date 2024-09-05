@@ -391,7 +391,7 @@
         <LibraryCharge smirks="[#1:1]-[#8X2H2+0]-[#1]" charge1="0.417 * elementary_charge ** 1" id="q-tip3p-H"></LibraryCharge>
         <LibraryCharge smirks="[#54:1]" charge1="0.0 * elementary_charge ** 1" id="Xe"></LibraryCharge>
     </LibraryCharges>
-    <ChargeIncrementModel version="0.3" number_of_conformers="500" partial_charge_method="am1elf10">
+    <ChargeIncrementModel version="0.3" number_of_conformers="1" partial_charge_method="am1-mulliken">
         <ChargeIncrement smirks="[#9:1]~[#9:2]" charge_increment1="0.0 * elementary_charge ** 1" charge_increment2="-0.0 * elementary_charge ** 1"></ChargeIncrement>
         <ChargeIncrement smirks="[#9:1]:[#9:2]" charge_increment1="0.0 * elementary_charge ** 1" charge_increment2="-0.0 * elementary_charge ** 1"></ChargeIncrement>
         <ChargeIncrement smirks="[#9:1]#[#9:2]" charge_increment1="0.0 * elementary_charge ** 1" charge_increment2="-0.0 * elementary_charge ** 1"></ChargeIncrement>
