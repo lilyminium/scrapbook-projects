@@ -3,7 +3,6 @@
 Experimenting with running HFEs with evaluator and yank.
 
 - a test of a molecule with OPC and OPC3 executes successfully in 8 hours or so
-- a test of a molecule with solute vsites fails
 
 Note -- to run evaluator with 4-site water, you'll need the `add-vsite-sfes` branch of [my fork](https://github.com/lilyminium/openff-evaluator).
 
@@ -18,3 +17,13 @@ pip uninstall openff-evaluator
 pip uninstall openff-evaluator-base
 pip uninstall mdtraj
 ```
+
+
+## Manifest
+
+- `evaluate-property.py` evaluates a single property
+- `filtered_dataset_sfe_np1.json` is a test dataset taken from https://github.com/barmoral/evaluator-SFEs/tree/main
+- `force-field.json` are Evaluator force field sources also taken from https://github.com/barmoral/evaluator-SFEs/tree/main
+- `run-evaluate-property.sh` shows how I executed `evaluate-property.py` on a cluster
+- `*.out` are output files
+
