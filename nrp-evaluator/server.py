@@ -75,6 +75,7 @@ class DaskKubernetesCluster(BaseDaskBackend):
 
 
 with DaskKubernetesCluster() as calculation_backend:
-
+    print("Starting the evaluator server")
     evaluator_server = EvaluatorServer(calculation_backend)
+    print(evaluator_server)
     evaluator_server.start()
