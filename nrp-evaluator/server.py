@@ -35,6 +35,7 @@ class DaskKubernetesCluster(BaseDaskBackend):
         self._cluster = KubeCluster(
             name=self._name,
             image=self._image,
+            namespace="openforcefield"
         )
         self._cluster.scale(self._number_of_workers)
         super().start()
