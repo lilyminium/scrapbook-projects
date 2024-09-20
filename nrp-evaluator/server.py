@@ -73,8 +73,8 @@ class DaskKubernetesCluster(BaseDaskBackend):
             gpu_assignments={},
         )
 
-
-with DaskKubernetesCluster() as calculation_backend:
+IMAGE = "ghcr.io/lilyminium/scrapbook-projects:tmp-evaluator-openeye-kubernetes-v0"
+with DaskKubernetesCluster(IMAGE) as calculation_backend:
     print("Starting the evaluator server")
     evaluator_server = EvaluatorServer(calculation_backend)
     print(evaluator_server)
