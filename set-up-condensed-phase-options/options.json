@@ -1,0 +1,918 @@
+{
+  "@type": "openff.evaluator.client.client.RequestOptions",
+  "batch_mode": {
+    "@type": "openff.evaluator.client.client.BatchMode",
+    "value": "SharedComponents"
+  },
+  "calculation_layers": [
+    "SimulationLayer"
+  ],
+  "calculation_schemas": {
+    "Density": {
+      "SimulationLayer": {
+        "@type": "openff.evaluator.layers.simulation.SimulationSchema",
+        "workflow_schema": {
+          "@type": "openff.evaluator.workflow.schemas.WorkflowSchema",
+          "final_value_source": {
+            "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+            "full_path": "conditional_group/average_density.value"
+          },
+          "outputs_to_store": {
+            "full_system": {
+              "@type": "openff.evaluator.storage.data.StoredSimulationData",
+              "coordinate_file_name": {
+                "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                "full_path": "conditional_group/production_simulation.output_coordinate_file"
+              },
+              "force_field_id": {
+                "@type": "openff.evaluator.attributes.attributes.PlaceholderValue"
+              },
+              "number_of_molecules": {
+                "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                "full_path": "build_coordinates.output_number_of_molecules"
+              },
+              "observables": {
+                "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                "full_path": "decorrelate_observables.output_observables"
+              },
+              "property_phase": 2,
+              "source_calculation_id": {
+                "@type": "openff.evaluator.attributes.attributes.PlaceholderValue"
+              },
+              "statistical_inefficiency": {
+                "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                "full_path": "conditional_group/average_density.time_series_statistics.statistical_inefficiency"
+              },
+              "substance": {
+                "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                "full_path": "build_coordinates.output_substance"
+              },
+              "thermodynamic_state": {
+                "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                "full_path": "global.thermodynamic_state"
+              },
+              "trajectory_file_name": {
+                "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                "full_path": "decorrelate_trajectory.output_trajectory_path"
+              }
+            }
+          },
+          "protocol_schemas": [
+            {
+              "@type": "openff.evaluator.workflow.schemas.ProtocolSchema",
+              "id": "build_coordinates",
+              "inputs": {
+                ".allow_merging": true,
+                ".box_aspect_ratio": [
+                  1.0,
+                  1.0,
+                  1.0
+                ],
+                ".count_exact_amount": true,
+                ".mass_density": {
+                  "@type": "openff.evaluator.unit.Quantity",
+                  "unit": "gram / milliliter",
+                  "value": 0.95
+                },
+                ".max_molecules": 1000,
+                ".retain_packmol_files": false,
+                ".substance": {
+                  "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                  "full_path": "global.substance"
+                },
+                ".tolerance": {
+                  "@type": "openff.evaluator.unit.Quantity",
+                  "unit": "angstrom",
+                  "value": 2.0
+                },
+                ".verbose_packmol": false
+              },
+              "type": "BuildCoordinatesPackmol"
+            },
+            {
+              "@type": "openff.evaluator.workflow.schemas.ProtocolSchema",
+              "id": "energy_minimisation",
+              "inputs": {
+                ".allow_merging": true,
+                ".enable_pbc": true,
+                ".input_coordinate_file": {
+                  "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                  "full_path": "build_coordinates.coordinate_file_path"
+                },
+                ".max_iterations": 0,
+                ".parameterized_system": {
+                  "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                  "full_path": "assign_parameters.parameterized_system"
+                },
+                ".tolerance": {
+                  "@type": "openff.evaluator.unit.Quantity",
+                  "unit": "kilojoule / mole",
+                  "value": 10.0
+                }
+              },
+              "type": "OpenMMEnergyMinimisation"
+            },
+            {
+              "@type": "openff.evaluator.workflow.schemas.ProtocolSchema",
+              "id": "equilibration_simulation",
+              "inputs": {
+                ".allow_gpu_platforms": true,
+                ".allow_merging": true,
+                ".checkpoint_frequency": 10,
+                ".enable_pbc": true,
+                ".ensemble": {
+                  "@type": "openff.evaluator.thermodynamics.Ensemble",
+                  "value": "NPT"
+                },
+                ".gradient_parameters": [],
+                ".high_precision": false,
+                ".input_coordinate_file": {
+                  "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                  "full_path": "energy_minimisation.output_coordinate_file"
+                },
+                ".output_frequency": 5000,
+                ".parameterized_system": {
+                  "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                  "full_path": "assign_parameters.parameterized_system"
+                },
+                ".steps_per_iteration": 500,
+                ".thermodynamic_state": {
+                  "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                  "full_path": "global.thermodynamic_state"
+                },
+                ".thermostat_friction": {
+                  "@type": "openff.evaluator.unit.Quantity",
+                  "unit": "1 / picosecond",
+                  "value": 1.0
+                },
+                ".timestep": {
+                  "@type": "openff.evaluator.unit.Quantity",
+                  "unit": "femtosecond",
+                  "value": 1
+                },
+                ".total_number_of_iterations": 1
+              },
+              "type": "OpenMMSimulation"
+            },
+            {
+              "@type": "openff.evaluator.workflow.schemas.ProtocolGroupSchema",
+              "id": "conditional_group",
+              "inputs": {
+                ".allow_merging": true,
+                ".conditions": [],
+                ".max_iterations": 100
+              },
+              "protocol_schemas": {
+                "average_density": {
+                  "@type": "openff.evaluator.workflow.schemas.ProtocolSchema",
+                  "id": "average_density",
+                  "inputs": {
+                    ".allow_merging": true,
+                    ".bootstrap_iterations": 250,
+                    ".bootstrap_sample_size": 1.0,
+                    ".divisor": 1.0,
+                    ".observable": {
+                      "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                      "full_path": "production_simulation.observables[Density]"
+                    },
+                    ".potential_energies": {
+                      "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                      "full_path": "production_simulation.observables[PotentialEnergy]"
+                    },
+                    ".thermodynamic_state": {
+                      "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                      "full_path": "global.thermodynamic_state"
+                    }
+                  },
+                  "type": "AverageObservable"
+                },
+                "production_simulation": {
+                  "@type": "openff.evaluator.workflow.schemas.ProtocolSchema",
+                  "id": "production_simulation",
+                  "inputs": {
+                    ".allow_gpu_platforms": true,
+                    ".allow_merging": true,
+                    ".checkpoint_frequency": 10,
+                    ".enable_pbc": true,
+                    ".ensemble": {
+                      "@type": "openff.evaluator.thermodynamics.Ensemble",
+                      "value": "NPT"
+                    },
+                    ".gradient_parameters": {
+                      "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                      "full_path": "global.parameter_gradient_keys"
+                    },
+                    ".high_precision": false,
+                    ".input_coordinate_file": {
+                      "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                      "full_path": "equilibration_simulation.output_coordinate_file"
+                    },
+                    ".output_frequency": 2000,
+                    ".parameterized_system": {
+                      "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                      "full_path": "assign_parameters.parameterized_system"
+                    },
+                    ".steps_per_iteration": 500,
+                    ".thermodynamic_state": {
+                      "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                      "full_path": "global.thermodynamic_state"
+                    },
+                    ".thermostat_friction": {
+                      "@type": "openff.evaluator.unit.Quantity",
+                      "unit": "1 / picosecond",
+                      "value": 1.0
+                    },
+                    ".timestep": {
+                      "@type": "openff.evaluator.unit.Quantity",
+                      "unit": "femtosecond",
+                      "value": 1
+                    },
+                    ".total_number_of_iterations": 1
+                  },
+                  "type": "OpenMMSimulation"
+                }
+              },
+              "type": "ConditionalGroup"
+            },
+            {
+              "@type": "openff.evaluator.workflow.schemas.ProtocolSchema",
+              "id": "decorrelate_trajectory",
+              "inputs": {
+                ".allow_merging": true,
+                ".input_coordinate_file": {
+                  "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                  "full_path": "conditional_group/production_simulation.output_coordinate_file"
+                },
+                ".input_trajectory_path": {
+                  "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                  "full_path": "conditional_group/production_simulation.trajectory_file_path"
+                },
+                ".time_series_statistics": {
+                  "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                  "full_path": "conditional_group/average_density.time_series_statistics"
+                }
+              },
+              "type": "DecorrelateTrajectory"
+            },
+            {
+              "@type": "openff.evaluator.workflow.schemas.ProtocolSchema",
+              "id": "decorrelate_observables",
+              "inputs": {
+                ".allow_merging": true,
+                ".input_observables": {
+                  "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                  "full_path": "conditional_group/production_simulation.observables"
+                },
+                ".time_series_statistics": {
+                  "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                  "full_path": "conditional_group/average_density.time_series_statistics"
+                }
+              },
+              "type": "DecorrelateObservables"
+            },
+            {
+              "@type": "openff.evaluator.workflow.schemas.ProtocolSchema",
+              "id": "assign_parameters",
+              "inputs": {
+                ".allow_merging": true,
+                ".coordinate_file_path": {
+                  "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                  "full_path": "build_coordinates.coordinate_file_path"
+                },
+                ".force_field_path": {
+                  "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                  "full_path": "global.force_field_path"
+                },
+                ".substance": {
+                  "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                  "full_path": "build_coordinates.output_substance"
+                }
+              },
+              "type": "BuildSmirnoffSystem"
+            }
+          ]
+        }
+      }
+    },
+    "EnthalpyOfMixing": {
+      "SimulationLayer": {
+        "@type": "openff.evaluator.layers.simulation.SimulationSchema",
+        "workflow_schema": {
+          "@type": "openff.evaluator.workflow.schemas.WorkflowSchema",
+          "final_value_source": {
+            "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+            "full_path": "calculate_excess_observable.result"
+          },
+          "outputs_to_store": {
+            "component_$(component_replicator)": {
+              "@type": "openff.evaluator.storage.data.StoredSimulationData",
+              "coordinate_file_name": {
+                "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                "full_path": "conditional_group_component_$(component_replicator)/production_simulation_component_$(component_replicator).output_coordinate_file"
+              },
+              "force_field_id": {
+                "@type": "openff.evaluator.attributes.attributes.PlaceholderValue"
+              },
+              "number_of_molecules": {
+                "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                "full_path": "build_coordinates_component_$(component_replicator).output_number_of_molecules"
+              },
+              "observables": {
+                "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                "full_path": "decorrelate_observables_component_$(component_replicator).output_observables"
+              },
+              "property_phase": 2,
+              "source_calculation_id": {
+                "@type": "openff.evaluator.attributes.attributes.PlaceholderValue"
+              },
+              "statistical_inefficiency": {
+                "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                "full_path": "conditional_group_component_$(component_replicator)/extract_observable_component_$(component_replicator).time_series_statistics.statistical_inefficiency"
+              },
+              "substance": {
+                "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                "full_path": "build_coordinates_component_$(component_replicator).output_substance"
+              },
+              "thermodynamic_state": {
+                "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                "full_path": "global.thermodynamic_state"
+              },
+              "trajectory_file_name": {
+                "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                "full_path": "decorrelate_trajectory_component_$(component_replicator).output_trajectory_path"
+              }
+            },
+            "full_system": {
+              "@type": "openff.evaluator.storage.data.StoredSimulationData",
+              "coordinate_file_name": {
+                "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                "full_path": "conditional_group_mixture/production_simulation_mixture.output_coordinate_file"
+              },
+              "force_field_id": {
+                "@type": "openff.evaluator.attributes.attributes.PlaceholderValue"
+              },
+              "number_of_molecules": {
+                "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                "full_path": "build_coordinates_mixture.output_number_of_molecules"
+              },
+              "observables": {
+                "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                "full_path": "decorrelate_observables_mixture.output_observables"
+              },
+              "property_phase": 2,
+              "source_calculation_id": {
+                "@type": "openff.evaluator.attributes.attributes.PlaceholderValue"
+              },
+              "statistical_inefficiency": {
+                "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                "full_path": "conditional_group_mixture/extract_observable_mixture.time_series_statistics.statistical_inefficiency"
+              },
+              "substance": {
+                "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                "full_path": "build_coordinates_mixture.output_substance"
+              },
+              "thermodynamic_state": {
+                "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                "full_path": "global.thermodynamic_state"
+              },
+              "trajectory_file_name": {
+                "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                "full_path": "decorrelate_trajectory_mixture.output_trajectory_path"
+              }
+            }
+          },
+          "protocol_replicators": [
+            {
+              "@type": "openff.evaluator.workflow.schemas.ProtocolReplicator",
+              "id": "component_replicator",
+              "template_values": {
+                "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                "full_path": "global.components"
+              }
+            }
+          ],
+          "protocol_schemas": [
+            {
+              "@type": "openff.evaluator.workflow.schemas.ProtocolSchema",
+              "id": "build_coordinates_component_$(component_replicator)",
+              "inputs": {
+                ".allow_merging": true,
+                ".box_aspect_ratio": [
+                  1.0,
+                  1.0,
+                  1.0
+                ],
+                ".count_exact_amount": true,
+                ".mass_density": {
+                  "@type": "openff.evaluator.unit.Quantity",
+                  "unit": "gram / milliliter",
+                  "value": 0.95
+                },
+                ".max_molecules": 1000,
+                ".retain_packmol_files": false,
+                ".substance": {
+                  "@type": "openff.evaluator.workflow.utils.ReplicatorValue",
+                  "replicator_id": "component_replicator"
+                },
+                ".tolerance": {
+                  "@type": "openff.evaluator.unit.Quantity",
+                  "unit": "angstrom",
+                  "value": 2.0
+                },
+                ".verbose_packmol": false
+              },
+              "type": "BuildCoordinatesPackmol"
+            },
+            {
+              "@type": "openff.evaluator.workflow.schemas.ProtocolSchema",
+              "id": "energy_minimisation_component_$(component_replicator)",
+              "inputs": {
+                ".allow_merging": true,
+                ".enable_pbc": true,
+                ".input_coordinate_file": {
+                  "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                  "full_path": "build_coordinates_component_$(component_replicator).coordinate_file_path"
+                },
+                ".max_iterations": 0,
+                ".parameterized_system": {
+                  "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                  "full_path": "assign_parameters_component_$(component_replicator).parameterized_system"
+                },
+                ".tolerance": {
+                  "@type": "openff.evaluator.unit.Quantity",
+                  "unit": "kilojoule / mole",
+                  "value": 10.0
+                }
+              },
+              "type": "OpenMMEnergyMinimisation"
+            },
+            {
+              "@type": "openff.evaluator.workflow.schemas.ProtocolSchema",
+              "id": "equilibration_simulation_component_$(component_replicator)",
+              "inputs": {
+                ".allow_gpu_platforms": true,
+                ".allow_merging": true,
+                ".checkpoint_frequency": 10,
+                ".enable_pbc": true,
+                ".ensemble": {
+                  "@type": "openff.evaluator.thermodynamics.Ensemble",
+                  "value": "NPT"
+                },
+                ".gradient_parameters": [],
+                ".high_precision": false,
+                ".input_coordinate_file": {
+                  "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                  "full_path": "energy_minimisation_component_$(component_replicator).output_coordinate_file"
+                },
+                ".output_frequency": 5000,
+                ".parameterized_system": {
+                  "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                  "full_path": "assign_parameters_component_$(component_replicator).parameterized_system"
+                },
+                ".steps_per_iteration": 500,
+                ".thermodynamic_state": {
+                  "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                  "full_path": "global.thermodynamic_state"
+                },
+                ".thermostat_friction": {
+                  "@type": "openff.evaluator.unit.Quantity",
+                  "unit": "1 / picosecond",
+                  "value": 1.0
+                },
+                ".timestep": {
+                  "@type": "openff.evaluator.unit.Quantity",
+                  "unit": "femtosecond",
+                  "value": 1
+                },
+                ".total_number_of_iterations": 1
+              },
+              "type": "OpenMMSimulation"
+            },
+            {
+              "@type": "openff.evaluator.workflow.schemas.ProtocolGroupSchema",
+              "id": "conditional_group_component_$(component_replicator)",
+              "inputs": {
+                ".allow_merging": true,
+                ".conditions": [],
+                ".max_iterations": 100
+              },
+              "protocol_schemas": {
+                "extract_observable_component_$(component_replicator)": {
+                  "@type": "openff.evaluator.workflow.schemas.ProtocolSchema",
+                  "id": "extract_observable_component_$(component_replicator)",
+                  "inputs": {
+                    ".allow_merging": true,
+                    ".bootstrap_iterations": 250,
+                    ".bootstrap_sample_size": 1.0,
+                    ".divisor": {
+                      "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                      "full_path": "build_coordinates_component_$(component_replicator).output_number_of_molecules"
+                    },
+                    ".observable": {
+                      "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                      "full_path": "production_simulation_component_$(component_replicator).observables[Enthalpy]"
+                    },
+                    ".potential_energies": {
+                      "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                      "full_path": "production_simulation_component_$(component_replicator).observables[PotentialEnergy]"
+                    },
+                    ".thermodynamic_state": {
+                      "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                      "full_path": "global.thermodynamic_state"
+                    }
+                  },
+                  "type": "AverageObservable"
+                },
+                "production_simulation_component_$(component_replicator)": {
+                  "@type": "openff.evaluator.workflow.schemas.ProtocolSchema",
+                  "id": "production_simulation_component_$(component_replicator)",
+                  "inputs": {
+                    ".allow_gpu_platforms": true,
+                    ".allow_merging": true,
+                    ".checkpoint_frequency": 10,
+                    ".enable_pbc": true,
+                    ".ensemble": {
+                      "@type": "openff.evaluator.thermodynamics.Ensemble",
+                      "value": "NPT"
+                    },
+                    ".gradient_parameters": {
+                      "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                      "full_path": "global.parameter_gradient_keys"
+                    },
+                    ".high_precision": false,
+                    ".input_coordinate_file": {
+                      "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                      "full_path": "equilibration_simulation_component_$(component_replicator).output_coordinate_file"
+                    },
+                    ".output_frequency": 2000,
+                    ".parameterized_system": {
+                      "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                      "full_path": "assign_parameters_component_$(component_replicator).parameterized_system"
+                    },
+                    ".steps_per_iteration": 500,
+                    ".thermodynamic_state": {
+                      "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                      "full_path": "global.thermodynamic_state"
+                    },
+                    ".thermostat_friction": {
+                      "@type": "openff.evaluator.unit.Quantity",
+                      "unit": "1 / picosecond",
+                      "value": 1.0
+                    },
+                    ".timestep": {
+                      "@type": "openff.evaluator.unit.Quantity",
+                      "unit": "femtosecond",
+                      "value": 1
+                    },
+                    ".total_number_of_iterations": 1
+                  },
+                  "type": "OpenMMSimulation"
+                },
+                "weight_by_mole_fraction_$(component_replicator)": {
+                  "@type": "openff.evaluator.workflow.schemas.ProtocolSchema",
+                  "id": "weight_by_mole_fraction_$(component_replicator)",
+                  "inputs": {
+                    ".allow_merging": true,
+                    ".component": {
+                      "@type": "openff.evaluator.workflow.utils.ReplicatorValue",
+                      "replicator_id": "component_replicator"
+                    },
+                    ".full_substance": {
+                      "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                      "full_path": "global.substance"
+                    },
+                    ".value": {
+                      "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                      "full_path": "extract_observable_component_$(component_replicator).value"
+                    }
+                  },
+                  "type": "WeightByMoleFraction"
+                }
+              },
+              "type": "ConditionalGroup"
+            },
+            {
+              "@type": "openff.evaluator.workflow.schemas.ProtocolSchema",
+              "id": "decorrelate_trajectory_component_$(component_replicator)",
+              "inputs": {
+                ".allow_merging": true,
+                ".input_coordinate_file": {
+                  "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                  "full_path": "conditional_group_component_$(component_replicator)/production_simulation_component_$(component_replicator).output_coordinate_file"
+                },
+                ".input_trajectory_path": {
+                  "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                  "full_path": "conditional_group_component_$(component_replicator)/production_simulation_component_$(component_replicator).trajectory_file_path"
+                },
+                ".time_series_statistics": {
+                  "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                  "full_path": "conditional_group_component_$(component_replicator)/extract_observable_component_$(component_replicator).time_series_statistics"
+                }
+              },
+              "type": "DecorrelateTrajectory"
+            },
+            {
+              "@type": "openff.evaluator.workflow.schemas.ProtocolSchema",
+              "id": "decorrelate_observables_component_$(component_replicator)",
+              "inputs": {
+                ".allow_merging": true,
+                ".input_observables": {
+                  "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                  "full_path": "conditional_group_component_$(component_replicator)/production_simulation_component_$(component_replicator).observables"
+                },
+                ".time_series_statistics": {
+                  "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                  "full_path": "conditional_group_component_$(component_replicator)/extract_observable_component_$(component_replicator).time_series_statistics"
+                }
+              },
+              "type": "DecorrelateObservables"
+            },
+            {
+              "@type": "openff.evaluator.workflow.schemas.ProtocolSchema",
+              "id": "build_coordinates_mixture",
+              "inputs": {
+                ".allow_merging": true,
+                ".box_aspect_ratio": [
+                  1.0,
+                  1.0,
+                  1.0
+                ],
+                ".count_exact_amount": true,
+                ".mass_density": {
+                  "@type": "openff.evaluator.unit.Quantity",
+                  "unit": "gram / milliliter",
+                  "value": 0.95
+                },
+                ".max_molecules": 1000,
+                ".retain_packmol_files": false,
+                ".substance": {
+                  "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                  "full_path": "global.substance"
+                },
+                ".tolerance": {
+                  "@type": "openff.evaluator.unit.Quantity",
+                  "unit": "angstrom",
+                  "value": 2.0
+                },
+                ".verbose_packmol": false
+              },
+              "type": "BuildCoordinatesPackmol"
+            },
+            {
+              "@type": "openff.evaluator.workflow.schemas.ProtocolSchema",
+              "id": "energy_minimisation_mixture",
+              "inputs": {
+                ".allow_merging": true,
+                ".enable_pbc": true,
+                ".input_coordinate_file": {
+                  "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                  "full_path": "build_coordinates_mixture.coordinate_file_path"
+                },
+                ".max_iterations": 0,
+                ".parameterized_system": {
+                  "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                  "full_path": "assign_parameters_mixture.parameterized_system"
+                },
+                ".tolerance": {
+                  "@type": "openff.evaluator.unit.Quantity",
+                  "unit": "kilojoule / mole",
+                  "value": 10.0
+                }
+              },
+              "type": "OpenMMEnergyMinimisation"
+            },
+            {
+              "@type": "openff.evaluator.workflow.schemas.ProtocolSchema",
+              "id": "equilibration_simulation_mixture",
+              "inputs": {
+                ".allow_gpu_platforms": true,
+                ".allow_merging": true,
+                ".checkpoint_frequency": 10,
+                ".enable_pbc": true,
+                ".ensemble": {
+                  "@type": "openff.evaluator.thermodynamics.Ensemble",
+                  "value": "NPT"
+                },
+                ".gradient_parameters": [],
+                ".high_precision": false,
+                ".input_coordinate_file": {
+                  "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                  "full_path": "energy_minimisation_mixture.output_coordinate_file"
+                },
+                ".output_frequency": 5000,
+                ".parameterized_system": {
+                  "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                  "full_path": "assign_parameters_mixture.parameterized_system"
+                },
+                ".steps_per_iteration": 500,
+                ".thermodynamic_state": {
+                  "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                  "full_path": "global.thermodynamic_state"
+                },
+                ".thermostat_friction": {
+                  "@type": "openff.evaluator.unit.Quantity",
+                  "unit": "1 / picosecond",
+                  "value": 1.0
+                },
+                ".timestep": {
+                  "@type": "openff.evaluator.unit.Quantity",
+                  "unit": "femtosecond",
+                  "value": 1
+                },
+                ".total_number_of_iterations": 1
+              },
+              "type": "OpenMMSimulation"
+            },
+            {
+              "@type": "openff.evaluator.workflow.schemas.ProtocolGroupSchema",
+              "id": "conditional_group_mixture",
+              "inputs": {
+                ".allow_merging": true,
+                ".conditions": [],
+                ".max_iterations": 100
+              },
+              "protocol_schemas": {
+                "extract_observable_mixture": {
+                  "@type": "openff.evaluator.workflow.schemas.ProtocolSchema",
+                  "id": "extract_observable_mixture",
+                  "inputs": {
+                    ".allow_merging": true,
+                    ".bootstrap_iterations": 250,
+                    ".bootstrap_sample_size": 1.0,
+                    ".divisor": {
+                      "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                      "full_path": "build_coordinates_mixture.output_number_of_molecules"
+                    },
+                    ".observable": {
+                      "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                      "full_path": "production_simulation_mixture.observables[Enthalpy]"
+                    },
+                    ".potential_energies": {
+                      "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                      "full_path": "production_simulation_mixture.observables[PotentialEnergy]"
+                    },
+                    ".thermodynamic_state": {
+                      "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                      "full_path": "global.thermodynamic_state"
+                    }
+                  },
+                  "type": "AverageObservable"
+                },
+                "production_simulation_mixture": {
+                  "@type": "openff.evaluator.workflow.schemas.ProtocolSchema",
+                  "id": "production_simulation_mixture",
+                  "inputs": {
+                    ".allow_gpu_platforms": true,
+                    ".allow_merging": true,
+                    ".checkpoint_frequency": 10,
+                    ".enable_pbc": true,
+                    ".ensemble": {
+                      "@type": "openff.evaluator.thermodynamics.Ensemble",
+                      "value": "NPT"
+                    },
+                    ".gradient_parameters": {
+                      "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                      "full_path": "global.parameter_gradient_keys"
+                    },
+                    ".high_precision": false,
+                    ".input_coordinate_file": {
+                      "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                      "full_path": "equilibration_simulation_mixture.output_coordinate_file"
+                    },
+                    ".output_frequency": 2000,
+                    ".parameterized_system": {
+                      "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                      "full_path": "assign_parameters_mixture.parameterized_system"
+                    },
+                    ".steps_per_iteration": 500,
+                    ".thermodynamic_state": {
+                      "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                      "full_path": "global.thermodynamic_state"
+                    },
+                    ".thermostat_friction": {
+                      "@type": "openff.evaluator.unit.Quantity",
+                      "unit": "1 / picosecond",
+                      "value": 1.0
+                    },
+                    ".timestep": {
+                      "@type": "openff.evaluator.unit.Quantity",
+                      "unit": "femtosecond",
+                      "value": 1
+                    },
+                    ".total_number_of_iterations": 1
+                  },
+                  "type": "OpenMMSimulation"
+                }
+              },
+              "type": "ConditionalGroup"
+            },
+            {
+              "@type": "openff.evaluator.workflow.schemas.ProtocolSchema",
+              "id": "decorrelate_trajectory_mixture",
+              "inputs": {
+                ".allow_merging": true,
+                ".input_coordinate_file": {
+                  "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                  "full_path": "conditional_group_mixture/production_simulation_mixture.output_coordinate_file"
+                },
+                ".input_trajectory_path": {
+                  "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                  "full_path": "conditional_group_mixture/production_simulation_mixture.trajectory_file_path"
+                },
+                ".time_series_statistics": {
+                  "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                  "full_path": "conditional_group_mixture/extract_observable_mixture.time_series_statistics"
+                }
+              },
+              "type": "DecorrelateTrajectory"
+            },
+            {
+              "@type": "openff.evaluator.workflow.schemas.ProtocolSchema",
+              "id": "decorrelate_observables_mixture",
+              "inputs": {
+                ".allow_merging": true,
+                ".input_observables": {
+                  "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                  "full_path": "conditional_group_mixture/production_simulation_mixture.observables"
+                },
+                ".time_series_statistics": {
+                  "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                  "full_path": "conditional_group_mixture/extract_observable_mixture.time_series_statistics"
+                }
+              },
+              "type": "DecorrelateObservables"
+            },
+            {
+              "@type": "openff.evaluator.workflow.schemas.ProtocolSchema",
+              "id": "add_component_observables",
+              "inputs": {
+                ".allow_merging": true,
+                ".values": {
+                  "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                  "full_path": "conditional_group_component_$(component_replicator)/weight_by_mole_fraction_$(component_replicator).weighted_value"
+                }
+              },
+              "type": "AddValues"
+            },
+            {
+              "@type": "openff.evaluator.workflow.schemas.ProtocolSchema",
+              "id": "calculate_excess_observable",
+              "inputs": {
+                ".allow_merging": true,
+                ".value_a": {
+                  "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                  "full_path": "add_component_observables.result"
+                },
+                ".value_b": {
+                  "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                  "full_path": "conditional_group_mixture/extract_observable_mixture.value"
+                }
+              },
+              "type": "SubtractValues"
+            },
+            {
+              "@type": "openff.evaluator.workflow.schemas.ProtocolSchema",
+              "id": "assign_parameters_component_$(component_replicator)",
+              "inputs": {
+                ".allow_merging": true,
+                ".coordinate_file_path": {
+                  "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                  "full_path": "build_coordinates_component_$(component_replicator).coordinate_file_path"
+                },
+                ".force_field_path": {
+                  "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                  "full_path": "global.force_field_path"
+                },
+                ".substance": {
+                  "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                  "full_path": "build_coordinates_component_$(component_replicator).output_substance"
+                }
+              },
+              "type": "BuildSmirnoffSystem"
+            },
+            {
+              "@type": "openff.evaluator.workflow.schemas.ProtocolSchema",
+              "id": "assign_parameters_mixture",
+              "inputs": {
+                ".allow_merging": true,
+                ".coordinate_file_path": {
+                  "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                  "full_path": "build_coordinates_mixture.coordinate_file_path"
+                },
+                ".force_field_path": {
+                  "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                  "full_path": "global.force_field_path"
+                },
+                ".substance": {
+                  "@type": "openff.evaluator.workflow.utils.ProtocolPath",
+                  "full_path": "build_coordinates_mixture.output_substance"
+                }
+              },
+              "type": "BuildSmirnoffSystem"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

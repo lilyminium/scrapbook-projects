@@ -16,12 +16,15 @@ def modify_workflow_schema(original_schema):
         if "simulation" in schema.id:
             protocol = schema.to_protocol()
             protocol.steps_per_iteration = 500
+            protocol.timestep = 1 * unit.femtosecond
             schema = protocol.schema
 
-        if schema.id == "conditional_group":
+        if "conditional_group" in schema.id:
             protocol = schema.to_protocol()
-            simulation_protocol = protocol.protocols["production_simulation"]
-            simulation_protocol.steps_per_iteration = 500
+            for name, cg_protocol in protocol.protocols.items():
+                if "production_simulation" in name:
+                    cg_protocol.timestep = 1 * unit.femtosecond
+                    cg_protocol.steps_per_iteration = 500
             schema = protocol.schema
         
         new_workflow_schema.append(schema)
@@ -59,7 +62,7 @@ def main(
 
     pathlib.Path(output_file).parent.mkdir(parents=True, exist_ok=True)
     with open(output_file, "w") as file:
-        file.write(options_file.to_json())
+        file.write(estimation_options.json(format=True))
 
 
 if __name__ == "__main__":
