@@ -113,9 +113,9 @@ The enthalpy of each simulation is extracted. Here also, the time series statist
 
 The error shown here is the standard error by bootstrapping the sampled uncorrelated data for an estimated distribution of means.
 
-Enthalpy of water (component 0): -32.30838306619456 ± 0.015409825095665686 kJ/mol
-Enthalpy of component 1: 261.5758490214179 ± 0.07449593325903951 kJ/mol
-Enthalpy of mixture: 109.39961993636248 ± 0.07782841891809451 kJ/mol
+- Enthalpy of water (component 0): -32.30838306619456 ± 0.015409825095665686 kJ/mol
+- Enthalpy of component 1: 261.5758490214179 ± 0.07449593325903951 kJ/mol
+- Enthalpy of mixture: 109.39961993636248 ± 0.07782841891809451 kJ/mol
 
 #### Time series statistics
 
