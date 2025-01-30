@@ -35,6 +35,8 @@ This can differ from the input; while the input specifies the mole fractions
 to 4 dp (0.5098 and 0.4902), as there are only 1000 molecules the mole fractions
 are rounded to 3 dp (0.510 and 0.490).
 
+The box is packed to a default density of 0.95 g/mL with a 2 A tolerance in the box allowed. The box size to pack is [approximated from the mass density](https://github.com/openforcefield/openff-evaluator/blob/main/openff/evaluator/utils/packmol.py#L109) and scaled up by 1.1. 
+
 ### Assign parameters
 
 [Evaluator link](https://github.com/openforcefield/openff-evaluator/blob/main/openff/evaluator/protocols/forcefield.py#L530)

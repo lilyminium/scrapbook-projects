@@ -23,6 +23,8 @@ Links to the code as implemented in Evaluator, and to the output files / directo
 Packmol is used to pack the box of liquid (1000 molecules, here).
 `output.pdb` contains the packed box.
 
+The box is packed to a default density of 0.95 g/mL with a 2 A tolerance in the box allowed. The box size to pack is [approximated from the mass density](https://github.com/openforcefield/openff-evaluator/blob/main/openff/evaluator/utils/packmol.py#L109) and scaled up by 1.1. 
+
 ### Assign parameters
 
 [Evaluator link](https://github.com/openforcefield/openff-evaluator/blob/main/openff/evaluator/protocols/forcefield.py#L530)
