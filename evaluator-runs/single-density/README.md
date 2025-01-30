@@ -2,11 +2,11 @@
 
 ## Property
 
-Property type: Density (see dataset.json for full specification, details pulled out below)
-Substance: CCCC
-Temperature: 298.15 K
-Pressure: 101.325 kPa
-Value: 0.62089 g/mL
+- Property type: Density (see dataset.json for full specification, details pulled out below)
+- Substance: CCCC
+- Temperature: 298.15 K
+- Pressure: 101.325 kPa
+- Value: 0.62089 g/mL
 
 Number of molecules in this example: 1000
 

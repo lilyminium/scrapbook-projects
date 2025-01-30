@@ -2,11 +2,11 @@
 
 ## Property
 
-Property type: EnthalpyOfMixing (see dataset.json for full specification, details pulled out below)
-Substance: 0.5098 O (component 0) + 0.4902 OCCN(CCO)CCO (component 1)
-Temperature: 303.15 K
-Pressure: 100 kPa
-Value: -1.221 kJ/mol
+- Property type: EnthalpyOfMixing (see dataset.json for full specification, details pulled out below)
+- Substance: 0.5098 O (component 0) + 0.4902 OCCN(CCO)CCO (component 1)
+- Temperature: 303.15 K
+- Pressure: 100 kPa
+- Value: -1.221 kJ/mol
 
 Number of molecules in this example: 1000
 
