@@ -1,8 +1,8 @@
-# Enthalpy of mixing
+# Density
 
 ## Property
 
-Property type: EnthalpyOfMixing (see dataset.json for full specification, details pulled out below)
+Property type: Density (see dataset.json for full specification, details pulled out below)
 Substance: CCCC
 Temperature: 298.15 K
 Pressure: 101.325 kPa
@@ -12,13 +12,15 @@ Number of molecules in this example: 1000
 
 ## Steps
 
+Links to the code as implemented in Evaluator, and to the output files / directory where the protocol is executed, are provided for each step.
+
 ### Packing the box
 
 [Evaluator link](https://github.com/openforcefield/openff-evaluator/blob/main/openff/evaluator/protocols/coordinates.py#L24)
 
 [Directory link](working-directory/SimulationLayer/757f586ad95d4b919916bd85661a60de/6316_build_coordinates)
 
-Packmol is used to pack the box of liquid (1000, here).
+Packmol is used to pack the box of liquid (1000 molecules, here).
 `output.pdb` contains the packed box.
 
 ### Assign parameters

@@ -16,6 +16,8 @@ $$dH_{mixing} = H_{mixture} - (\chi_0 \times H_{component 0} + \chi_1 \times H_{
 
 ## Steps
 
+Links to the code as implemented in Evaluator, and to the output files / directory where the protocol is executed, are provided for each step.
+
 ### Packing the box
 
 [Evaluator link](https://github.com/openforcefield/openff-evaluator/blob/main/openff/evaluator/protocols/coordinates.py#L24)
