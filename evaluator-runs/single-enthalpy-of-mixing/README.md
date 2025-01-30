@@ -70,6 +70,12 @@ Directory links:
 The minimised coordinates are used in equilibration (NPT, 200 ps, 2 fs timestep).
 The output file is `output.pdb`. 
 
+- integrator: LangevinMiddleIntegrator
+- barostat: MonteCarloBarostat
+- steps: 100000
+- output frequency: every 5000 steps
+- time step: 2 fs
+
 ### Production simulation
 
 [Evaluator link](https://github.com/openforcefield/openff-evaluator/blob/main/openff/evaluator/protocols/openmm.py#L366)
@@ -84,6 +90,12 @@ This is in a group called "conditional_group" because you can
 add conditions for convergence (e.g. within a particular error).
 In this run, there are no conditions, only a single 2 ns simulation is carried out.
 This is what was done in the Sage 2.0 workflow.
+
+- integrator: LangevinMiddleIntegrator
+- barostat: MonteCarloBarostat
+- number of steps: 1000000
+- time step: 2 fs
+- output_frequency: every 2000 steps
 
 A number of observables are collected during the simulation, including the enthalpy which is extracted in the next step.
 

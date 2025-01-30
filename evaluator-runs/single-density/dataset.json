@@ -1,0 +1,6 @@
+{
+  "@type": "openff.evaluator.datasets.datasets.PhysicalPropertyDataSet",
+  "properties": [
+	 {"id": "6316", "substance": {"components": [{"smiles": "CCCCC", "role": {"value": "solv", "@type": "openff.evaluator.substances.components.Component.Role"}, "@type": "openff.evaluator.substances.components.Component"}], "amounts": {"CCCCC{solv}": [{"value": 1.0, "@type": "openff.evaluator.substances.amounts.MoleFraction"}]}, "@type": "openff.evaluator.substances.substances.Substance"}, "phase": 2, "thermodynamic_state": {"temperature": {"value": 298.15, "unit": "K", "@type": "openff.evaluator.unit.Quantity"}, "pressure": {"value": 101.325, "unit": "kPa", "@type": "openff.evaluator.unit.Quantity"}, "@type": "openff.evaluator.thermodynamics.ThermodynamicState"}, "value": {"value": 0.6208900000000002, "unit": "g / ml", "@type": "openff.evaluator.unit.Quantity"}, "source": {"doi": "10.1016/j.fluid.2013.11.026", "reference": "", "@type": "openff.evaluator.datasets.provenance.MeasurementSource"}, "gradients": [], "@type": "openff.evaluator.properties.density.Density"}
+  ]
+}
